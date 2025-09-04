@@ -1,5 +1,7 @@
 # The API package
 
+## This is for the testing purpose we keep them to tr different options
+
 This package sets up a [Express](https://expressjs.com/) API server and a connection to a SQL database using [Knex](https://knexjs.org/).
 
 For development you can run the command `npm run dev` which uses `nodemon` to watch files and restarts the server when a change happens.  
