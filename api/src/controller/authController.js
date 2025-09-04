@@ -94,3 +94,15 @@ export const login = async (req, res) => {
     });
   }
 };
+export const logOut = async (req, res) => {
+  res.clearCookie("accessTOken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    domain: "localhost",
+    path: "/",
+  });
+  res.status(200).json({
+    message: "logout Successfully",
+  });
+};

@@ -1,8 +1,8 @@
 "use client";
 import AuthLayout from "@/components/auth/AuthLayout";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import styles from "./LoginPage.module.css";
+import React, { useState } from "react";
+import styles from "../styles/commonStyles.module.css";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 

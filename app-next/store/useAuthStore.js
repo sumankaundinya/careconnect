@@ -53,6 +53,20 @@ export const useAuthStore = create(
           return null;
         }
       },
+      logout: async () => {
+        set({ setisLoading: true, error: null });
+        try {
+          await axiosInstance.post("/logout");
+          set({ user: null, isLoading: false });
+        } catch (error) {
+          set({
+            isLoading: false,
+            error: axios.isAxiosError(error)
+              ? error?.response?.data.error
+              : "Logout Failed",
+          });
+        }
+      },
     }),
     { name: "auth-storage", partialize: (state) => ({ user: state.user }) }
   )
