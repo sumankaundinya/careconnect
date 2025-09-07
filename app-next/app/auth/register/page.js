@@ -120,7 +120,7 @@ export default function RegisterPage() {
 
         <p className={styles.helper}>
           Already have an account{" "}
-          <Link href="/auth/register" className={styles.link}>
+          <Link href="/auth/login" className={styles.link}>
             Sign In
           </Link>
         </p>
