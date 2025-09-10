@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Heart, Users, Smartphone, Utensils, Car, Home } from "lucide-react";
 import styles from "./services.module.css";
 
-export default function ServicesPage() {
+export default function ServicesComponent() {
   const services = [
     {
       title: "Personal Care Support",
