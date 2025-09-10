@@ -77,6 +77,7 @@ export default function Header() {
         aria-hidden={!showMobileMenu}
       >
         <ul className={styles.navList}>
+
           {navItems &&
             navItems.map((item, index) => (
               <li key={index}>
@@ -100,6 +101,8 @@ export default function Header() {
               <Link href="/auth/login">Login</Link>
             </li>
           )}
+
+      
         </ul>
       </nav>
     </header>
