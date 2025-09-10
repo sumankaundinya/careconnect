@@ -22,8 +22,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json()); // parse JSON bodies
-app.use("/api/auth", authRouter);
-// Connect routes
+
 app.use("/api/auth", authRouter);
 app.use("/api/address", addressRouter);
 app.use("/api/elders", eldersRouter);

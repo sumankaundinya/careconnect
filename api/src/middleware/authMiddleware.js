@@ -1,4 +1,3 @@
-// @ts-check
 import { jwtVerify } from "jose";
 import dotenv from "dotenv";
 

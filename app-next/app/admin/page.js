@@ -1,5 +1,5 @@
 import React from "react";
 
-export default function page() {
+export default function Page() {
   return <div>page for admin like us</div>;
 }
