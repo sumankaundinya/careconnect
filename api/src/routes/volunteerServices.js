@@ -1,13 +1,13 @@
 import express from "express";
-import pool from "../database.js";
+import db from "../database.js";
 
 const router = express.Router();
 
 // Get all volunteer-services relations
 router.get("/", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM volunteer_services");
-    res.json(result.rows);
+    const result = await db("volunteer_services").select("*");
+    res.json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Database error" });
@@ -18,26 +18,28 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const { volunteer_id, service_id } = req.body;
-    const result = await pool.query(
-      "INSERT INTO volunteer_services (volunteer_id, service_id) VALUES ($1, $2) RETURNING *",
-      [volunteer_id, service_id]
-    );
-    res.json(result.rows[0]);
+    const [result] = await db("volunteer_services")
+      .insert({ volunteer_id, service_id })
+      .returning("*");
+    res.status(201).json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Database error" });
   }
 });
 
-// Delete relation
-router.delete("/", async (req, res) => {
+// Delete relation (unassign a service from a volunteer)
+router.delete("/:volunteer_id/:service_id", async (req, res) => {
   try {
-    const { volunteer_id, service_id } = req.body;
-    await pool.query(
-      "DELETE FROM volunteer_services WHERE volunteer_id=$1 AND service_id=$2",
-      [volunteer_id, service_id]
-    );
-    res.json({ message: "Relation deleted" });
+    const { volunteer_id, service_id } = req.params;
+    const count = await db("volunteer_services")
+      .where({ volunteer_id, service_id })
+      .del();
+
+    if (count === 0) {
+      return res.status(404).json({ error: "Relation not found" });
+    }
+    res.status(200).json({ message: "Relation deleted successfully" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Database error" });

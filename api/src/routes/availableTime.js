@@ -1,13 +1,13 @@
 import express from "express";
-import pool from "../database.js";
+import db from "../database.js";
 
 const router = express.Router();
 
 // Get all available times
 router.get("/", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM available_time");
-    res.json(result.rows);
+    const result = await db("available_time").select("*");
+    res.json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Database error" });
@@ -18,11 +18,11 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const { user_id, volunteer_id, service_id, date } = req.body;
-    const result = await pool.query(
-      "INSERT INTO available_time (user_id, volunteer_id, service_id, date) VALUES ($1,$2,$3,$4) RETURNING *",
-      [user_id, volunteer_id, service_id, date]
-    );
-    res.json(result.rows[0]);
+    const [result] = await db("available_time")
+      .insert({ user_id, volunteer_id, service_id, date })
+      .returning("*");
+
+    res.status(201).json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Database error" });
