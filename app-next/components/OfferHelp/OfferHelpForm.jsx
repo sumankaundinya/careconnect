@@ -12,19 +12,24 @@ export default function OfferHelpForm() {
   const [availableFrom, setAvailableFrom] = useState("");
   const [availableTo, setAvailableTo] = useState("");
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
   useEffect(() => {
-    fetch("/api/services")
+    fetch(`${API_URL}/api/services`)
       .then((res) => res.json())
-      .then((data) => setServices(data))
+      .then((data) => {
+        console.log("Fetched services:", data);
+        setServices(data);
+      })
       .catch((err) => console.error("Error fetching services:", err));
-  }, []);
+  }, [API_URL]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const volunteerId = 1;
 
     try {
-      await fetch("/api/volunteer-services", {
+      await fetch(`${API_URL}/api/volunteer-services`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -33,7 +38,7 @@ export default function OfferHelpForm() {
         }),
       });
 
-      await fetch("/api/available-time", {
+      await fetch(`${API_URL}/api/available-time`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
