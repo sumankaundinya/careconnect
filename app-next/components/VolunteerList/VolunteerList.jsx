@@ -12,7 +12,6 @@ export default function VolunteerList() {
   const router = useRouter();
   const [sortKey, setSortKey] = useState(searchParams.get("sortKey") || "");
 
-  // Fetch volunteers from backend
   useEffect(() => {
     const fetchVolunteers = async () => {
       try {

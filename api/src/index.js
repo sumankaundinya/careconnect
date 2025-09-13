@@ -4,7 +4,6 @@ dotenv.config();
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import dotenv from "dotenv/config";
 import eldersRouter from "./routes/elders.js";
 import authRouter from "./routes/authRoutes.js";
 import addressRouter from "./routes/addressRoutes.js";
@@ -24,9 +23,9 @@ app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json()); // parse JSON bodies
+app.use(express.json());
 app.use("/api/auth", authRouter);
-// Connect routes
+
 app.use("/api/auth", authRouter);
 app.use("/api/address", addressRouter);
 app.use("/api/elders", eldersRouter);

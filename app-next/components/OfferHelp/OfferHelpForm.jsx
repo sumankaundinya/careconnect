@@ -48,10 +48,10 @@ export default function OfferHelpForm() {
         }),
       });
 
-      alert("Offer help submitted successfully ✅");
+      alert("Offer help submitted successfully!");
     } catch (error) {
       console.error("Error submitting offer help:", error);
-      alert("Something went wrong ❌");
+      alert("Something went wrong");
     }
   };
 
