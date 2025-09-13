@@ -1,13 +1,13 @@
 import express from "express";
-import pool from "../database.js"; // pool is imported from database.js to interact with the database
+import db from "../database.js"; // pool is imported from database.js to interact with the database
 
 const router = express.Router();
 
 // Get all elders
 router.get("/", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM elders");
-    res.json(result.rows);
+    const result = await db("elders").select("*");
+    res.json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Database error" });
@@ -18,8 +18,8 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await pool.query("SELECT * FROM elders WHERE id = $1", [id]);
-    res.json(result.rows[0]);
+    const result = await db("elders").where({ id }).first();
+    res.json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Database error" });
@@ -39,12 +39,19 @@ router.post("/", async (req, res) => {
       photo,
       gender,
     } = req.body;
-    const result = await pool.query(
-      `INSERT INTO elders (name,email,phone_nr,address,post_nr,service_id,photo,gender)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
-      [name, email, phone_nr, address, post_nr, service_id, photo, gender]
-    );
-    res.json(result.rows[0]);
+    const [result] = await db("elders")
+      .insert({
+        name,
+        email,
+        phone_nr,
+        address,
+        post_nr,
+        service_id,
+        photo,
+        gender,
+      })
+      .returning("*");
+    res.json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Database error" });
@@ -61,24 +68,16 @@ router.put("/:id", async (req, res) => {
       return res.status(400).json({ error: "No fields provided for update" });
     }
 
-    // Build SET clause dynamically
-    const setClause = Object.keys(fields)
-      .map((key, idx) => `${key} = $${idx + 1}`)
-      .join(", ");
+    const [result] = await db("elders")
+      .where({ id })
+      .update(fields)
+      .returning("*");
 
-    const values = Object.values(fields);
-
-    const query = `UPDATE elders SET ${setClause} WHERE id = $${
-      values.length + 1
-    } RETURNING *`;
-
-    const result = await pool.query(query, [...values, id]);
-
-    if (result.rows.length === 0) {
+    if (!result) {
       return res.status(404).json({ error: "Elder not found" });
     }
 
-    res.json(result.rows[0]);
+    res.json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Database error" });
@@ -89,7 +88,7 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    await pool.query("DELETE FROM elders WHERE id=$1", [id]);
+    await db("elders").where({ id }).del();
     res.json({ message: "Elder deleted" });
   } catch (err) {
     console.error(err);

@@ -1,50 +1,38 @@
 "use client";
-
-import React, { useState, useEffect } from "react";
-import styles from "./VolunteerList.module.css";
+import React, { useEffect, useState } from "react";
 import Volunteer from "../Volunteer/Volunteer";
+import styles from "./VolunteerList.module.css";
 
-const mockVolunteers = [
-  {
-    id: 1,
-    name: "Anna Smith",
-    email: "anna@example.com",
-    address: "Copenhagen",
-    photo: "/images/volunteer1.jpg",
-    services: ["Shopping", "Cooking"],
-    availability: "Weekdays, 9am - 1pm",
-  },
-  {
-    id: 2,
-    name: "John Doe",
-    email: "john@example.com",
-    address: "Aarhus",
-    photo: "/images/volunteer2.jpg",
-    services: ["Gardening", "Companionship"],
-    availability: "Weekends, 4pm - 8pm",
-  },
-];
-
-const VolunteersList = () => {
+const VolunteerList = () => {
   const [volunteers, setVolunteers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // simulate API fetch
-    setTimeout(() => {
-      setVolunteers(mockVolunteers);
-    }, 500);
+    const fetchVolunteers = async () => {
+      try {
+        const res = await fetch("http://localhost:3001/api/volunteers");
+        const data = await res.json();
+        setVolunteers(data);
+      } catch (error) {
+        console.error("Failed to fetch volunteers:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchVolunteers();
   }, []);
 
+  if (loading) return <p className={styles.loading}>Loading volunteers...</p>;
+  if (!volunteers.length)
+    return <p className={styles.empty}>No volunteers found.</p>;
+
   return (
-    <div className={styles.container}>
-      <h2 className={styles.title}>Available Volunteers</h2>
-      <div className={styles.grid}>
-        {volunteers.map((v) => (
-          <Volunteer key={v.id} volunteer={v} />
-        ))}
-      </div>
+    <div className={styles.grid}>
+      {volunteers.map((volunteer) => (
+        <Volunteer key={volunteer.id} volunteer={volunteer} />
+      ))}
     </div>
   );
 };
 
-export default VolunteersList;
+export default VolunteerList;

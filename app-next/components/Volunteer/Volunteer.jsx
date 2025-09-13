@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./Volunteer.module.css";
+import styles from "../Volunteer/Volunteer.module.css";
 import Link from "next/link";
 
 const Volunteer = ({ volunteer }) => {
