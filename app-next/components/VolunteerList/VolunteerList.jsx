@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import styles from "./VolunteerList.module.css";
 import Volunteer from "../Volunteer/Volunteer";
+import SortControl from "../SortControl/SortControl";
 
 const mockVolunteers = [
   {
@@ -25,26 +27,39 @@ const mockVolunteers = [
   },
 ];
 
-const VolunteersList = () => {
+export default function VolunteersList() {
   const [volunteers, setVolunteers] = useState([]);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [sortKey, setSortKey] = useState(searchParams.get("sortKey") || "");
 
   useEffect(() => {
-    // simulate API fetch
-    setTimeout(() => {
-      setVolunteers(mockVolunteers);
-    }, 500);
+    setVolunteers(mockVolunteers);
   }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (sortKey) params.set("sortKey", sortKey);
+    router.replace(`?${params.toString()}`);
+  }, [sortKey, router]);
+
+  const sortedVolunteers = sortKey
+    ? [...volunteers].sort((a, b) =>
+        (a[sortKey] || "")
+          .toString()
+          .localeCompare((b[sortKey] || "").toString())
+      )
+    : volunteers;
 
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>Available Volunteers</h2>
+      <SortControl sortKey={sortKey} setSortKey={setSortKey} />
       <div className={styles.grid}>
-        {volunteers.map((v) => (
+        {sortedVolunteers.map((v) => (
           <Volunteer key={v.id} volunteer={v} />
         ))}
       </div>
     </div>
   );
-};
-
-export default VolunteersList;
+}
