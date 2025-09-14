@@ -3,10 +3,10 @@ import knex from "knex";
 const db = knex({
   client: "pg",
   connection: {
-    host: process.env.PGHOST,
-    user: process.env.PGUSER,
-    password: process.env.PGPASSWORD,
-    database: process.env.PGDATABASE,
+    host: process.env.PGHOST || "localhost",
+    user: process.env.PGUSER || "postgres",
+    password: process.env.PGPASSWORD || "daraz12345",
+    database: process.env.PGDATABASE || "postgres",
     port: Number(process.env.PGPORT),
   },
   pool: { min: 0, max: 10 },
