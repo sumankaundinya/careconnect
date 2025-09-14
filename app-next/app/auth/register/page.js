@@ -4,7 +4,8 @@ import Link from "next/link";
 import React, { useState } from "react";
 import styles from "../styles/commonStyles.module.css";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/app/provider/useAuthStore";
+import { useDispatch, useSelector } from "react-redux";
+import { register } from "@/app/provider/authSlice";
 
 export const initialLoginFormdata = {
   email: "",
@@ -15,9 +16,10 @@ export const initialLoginFormdata = {
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState(initialLoginFormdata);
+  const dispatch = useDispatch();
+  const { isLoading, error } = useSelector((s) => s.auth);
 
   const router = useRouter();
-  const { isLoading, register, error } = useAuthStore();
   const handleChange = (event) => {
     setFormData((prev) => ({
       ...prev,
@@ -25,27 +27,27 @@ export default function RegisterPage() {
     }));
   };
 
-  const handleLogin = async (event) => {
+  const handleRegister = async (event) => {
     event.preventDefault();
-
-    const userId = await register(
-      formData.name,
-      formData.email,
-      formData.password,
-      formData.role
-    );
-    console.log("user id", userId);
-    if (userId) {
+    try {
+      await dispatch(
+        register({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          role: formData.role,
+        })
+      ).unwrap();
       alert("Registration Successful");
       router.push("/auth/login");
-    } else {
+    } catch (error) {
       console.log(error);
     }
   };
 
   return (
     <AuthLayout>
-      <form onSubmit={handleLogin} className={styles.form}>
+      <form onSubmit={handleRegister} className={styles.form}>
         <div className={styles.field}>
           <label htmlFor="name" className={styles.label}>
             Name
