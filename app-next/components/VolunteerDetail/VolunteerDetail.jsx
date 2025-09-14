@@ -10,8 +10,9 @@ const VolunteerDetail = ({ volunteerId }) => {
     const fetchVolunteer = async () => {
       try {
         const res = await fetch(
-          `http://localhost:3001/api/volunteers/${volunteerId}`
-        );
+  `${process.env.NEXT_PUBLIC_API_URL}/api/volunteers/${volunteerId}`
+);
+
         const data = await res.json();
         setVolunteer(data);
       } catch (error) {
