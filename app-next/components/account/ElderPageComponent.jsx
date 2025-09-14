@@ -1,6 +1,8 @@
 "use client";
-import { useAddressStore } from "@/store/useAddressStore";
+import { createAddress, fetchAddress } from "@/app/provider/addressSlice";
+
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 const initialAddress = {
   name: "",
   address: "",
@@ -11,30 +13,33 @@ const initialAddress = {
   isDefault: false,
 };
 export default function ElderPageComponent({ user }) {
-  const { createAddress, address, error, isLoading, fetchAddress } =
-    useAddressStore();
+  const dispatch = useDispatch();
+  const {
+    isLoading,
+    error,
+    address: addressList,
+  } = useSelector((s) => s.address);
   const [helpRequests, setHelpRequests] = useState([]);
   const [showAddress, setShhowAddress] = useState(false);
   const [formData, setFormdata] = useState(initialAddress);
-  const addresses = Array.isArray(address) ? address : [];
+  const addresses = Array.isArray(addressList) ? addressList : [];
   const handleAddAddress = async (event) => {
     event.preventDefault();
     try {
-      const result = await createAddress(formData);
-      if (result) {
-        fetchAddress();
-        setFormdata(initialAddress);
-        setShhowAddress(false);
-        alert("AddressCreated Successfully");
-      }
+      await dispatch(createAddress(formData)).unwrap();
+      await dispatch(fetchAddress()).unwrap();
+
+      setFormdata(initialAddress);
+      setShhowAddress(false);
+      alert("AddressCreated Successfully");
     } catch (error) {
       console.log(error);
-      alert(error);
+      alert(error || "failed to create Address");
     }
   };
   useEffect(() => {
-    fetchAddress();
-  }, [fetchAddress]);
+    dispatch(fetchAddress());
+  }, [dispatch]);
   const handleEditAddress = async (addressId) => {
     console.log(addressId);
   };

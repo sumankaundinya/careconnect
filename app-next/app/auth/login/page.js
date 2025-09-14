@@ -4,7 +4,8 @@ import Link from "next/link";
 import React, { useState } from "react";
 import styles from "../styles/commonStyles.module.css";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "@/app/provider/authSlice";
 
 export const initialLoginFormdata = {
   email: "",
@@ -14,7 +15,8 @@ export const initialLoginFormdata = {
 export default function LoginPage() {
   const [formData, setFormData] = useState(initialLoginFormdata);
   const router = useRouter();
-  const { isLoading, login, error } = useAuthStore();
+  const dispatch = useDispatch();
+  const { isLoading, error, user } = useSelector((s) => s.auth);
   const handleChange = (event) => {
     setFormData((prev) => ({
       ...prev,
@@ -24,11 +26,11 @@ export default function LoginPage() {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-
-    const loginSuccess = await login(formData.email, formData.password);
-    if (loginSuccess) {
-      alert("login Successful");
-      const user = useAuthStore.getState().user;
+    try {
+      const user = await dispatch(
+        login({ email: formData.email, password: formData.password })
+      ).unwrap();
+      console.log(user);
       if (user?.role === "ADMIN") {
         router.push("/admin");
       } else if (user?.role === "VOLUNTEER") {
@@ -36,8 +38,8 @@ export default function LoginPage() {
       } else {
         router.push("/");
       }
-    } else {
-      console.log(error);
+    } catch (error) {
+      alert(error || "login Error");
     }
   };
 

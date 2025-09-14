@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import styles from "./Header.module.css";
 import { Menu } from "lucide-react";
 import Image from "next/image";
-import { useAuthStore } from "@/store/useAuthStore";
+
 import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "@/app/provider/authSlice";
 const navItems = [
   {
     title: "Home",
@@ -32,9 +34,9 @@ const navItems = [
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const { user, logout } = useAuthStore();
+  const { user } = useSelector((s) => s.auth);
+  const dispatch = useDispatch();
   const router = useRouter();
-
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
@@ -46,9 +48,13 @@ export default function Header() {
     setShowMobileMenu((prev) => !prev);
   };
   const handleLogout = async () => {
-    console.log("logout");
-    await logout();
-    router.push("/");
+    try {
+      await dispatch(logout()).unwrap();
+
+      router.push("/");
+    } catch (error) {
+      alert(error || "logout Error");
+    }
   };
   return (
     <header className={`${styles.header} ${scrolled ? styles.scrolled : ""} `}>
@@ -77,7 +83,6 @@ export default function Header() {
         aria-hidden={!showMobileMenu}
       >
         <ul className={styles.navList}>
-
           {navItems &&
             navItems.map((item, index) => (
               <li key={index}>
@@ -101,8 +106,6 @@ export default function Header() {
               <Link href="/auth/login">Login</Link>
             </li>
           )}
-
-      
         </ul>
       </nav>
     </header>
