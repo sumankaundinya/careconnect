@@ -7,7 +7,7 @@ const db = knex({
     user: process.env.PGUSER || "postgres",
     password: process.env.PGPASSWORD || "daraz12345",
     database: process.env.PGDATABASE || "postgres",
-    port: Number(process.env.PGPORT),
+    port: Number(process.env.PGPORT) || 5432,
   },
   pool: { min: 0, max: 10 },
 });
