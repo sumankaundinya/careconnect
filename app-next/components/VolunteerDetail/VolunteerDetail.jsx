@@ -10,8 +10,8 @@ const VolunteerDetail = ({ volunteerId }) => {
     const fetchVolunteer = async () => {
       try {
         const res = await fetch(
-  `${process.env.NEXT_PUBLIC_API_URL}/api/volunteers/${volunteerId}`
-);
+          `${process.env.NEXT_PUBLIC_API_URL}/api/volunteers/${volunteerId}`
+        );
 
         const data = await res.json();
         setVolunteer(data);
@@ -59,22 +59,6 @@ const VolunteerDetail = ({ volunteerId }) => {
           ? volunteer.services.join(", ")
           : "Not specified"}
       </p>
-
-      <div className={styles.reviews}>
-        <h3>Reviews:</h3>
-        {volunteer.reviews?.length ? (
-          <ul>
-            {volunteer.reviews.map((review) => (
-              <li key={review.id}>
-                <strong>{review.user}</strong> ({review.stars}⭐):{" "}
-                {review.description}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No reviews yet.</p>
-        )}
-      </div>
     </div>
   );
 };
