@@ -81,13 +81,6 @@ export default function LoginPage() {
         </button>
 
         <p className={styles.helper}>
-          Forgot Password{" "}
-          <Link href="/auth/forgot-password" className={styles.link}>
-            Reset Password
-          </Link>
-        </p>
-
-        <p className={styles.helper}>
           Don&apos;t have an account{" "}
           <Link href="/auth/register" className={styles.link}>
             Sign Up
