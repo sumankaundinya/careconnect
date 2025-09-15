@@ -1,9 +1,12 @@
 "use client";
 
-import { store } from "./store";
-
-const { Provider } = require("react-redux");
+import { AddressProvider } from "@/context/addressContext";
+import { AuthProvider } from "@/context/authContext";
 
 export const Providers = ({ children }) => {
-  return <Provider store={store}>{children}</Provider>;
+  return (
+    <AuthProvider>
+      <AddressProvider>{children}</AddressProvider>
+    </AuthProvider>
+  );
 };

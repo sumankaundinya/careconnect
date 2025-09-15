@@ -6,8 +6,8 @@ import { Menu } from "lucide-react";
 import Image from "next/image";
 
 import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
-import { logout } from "@/app/provider/authSlice";
+import { useAuthContext } from "@/context/authContext";
+
 const navItems = [
   {
     title: "Home",
@@ -34,9 +34,9 @@ const navItems = [
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const { user } = useSelector((s) => s.auth);
-  const dispatch = useDispatch();
+  const { user, logout } = useAuthContext();
   const router = useRouter();
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
@@ -49,7 +49,7 @@ export default function Header() {
   };
   const handleLogout = async () => {
     try {
-      await dispatch(logout()).unwrap();
+      await logout();
 
       router.push("/");
     } catch (error) {
@@ -89,6 +89,11 @@ export default function Header() {
                 <Link href={item.to}>{item.title}</Link>
               </li>
             ))}
+          {user && user.role === "ELDER" && (
+            <li>
+              <Link href={"volunteers"}>Volunteers</Link>
+            </li>
+          )}
           {user ? (
             <>
               <li>

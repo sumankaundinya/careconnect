@@ -4,8 +4,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import styles from "../styles/commonStyles.module.css";
 import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
-import { register } from "@/app/provider/authSlice";
+import { useAuthContext } from "@/context/authContext";
 
 export const initialLoginFormdata = {
   email: "",
@@ -16,8 +15,7 @@ export const initialLoginFormdata = {
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState(initialLoginFormdata);
-  const dispatch = useDispatch();
-  const { isLoading, error } = useSelector((s) => s.auth);
+  const { register, error, isLoading, setError } = useAuthContext();
 
   const router = useRouter();
   const handleChange = (event) => {
@@ -30,18 +28,18 @@ export default function RegisterPage() {
   const handleRegister = async (event) => {
     event.preventDefault();
     try {
-      await dispatch(
-        register({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-          role: formData.role,
-        })
-      ).unwrap();
+      const userId = await register(
+        formData.email,
+        formData.name,
+        formData.password,
+        formData.role
+      );
+    } catch (error) {
+      setError(error);
+      console.log(error);
+    } finally {
       alert("Registration Successful");
       router.push("/auth/login");
-    } catch (error) {
-      console.log(error);
     }
   };
 

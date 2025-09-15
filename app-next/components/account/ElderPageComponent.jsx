@@ -1,8 +1,7 @@
 "use client";
-import { createAddress, fetchAddress } from "@/app/provider/addressSlice";
+import { useAddressContext } from "@/context/addressContext";
 
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 const initialAddress = {
   name: "",
   address: "",
@@ -13,12 +12,13 @@ const initialAddress = {
   isDefault: false,
 };
 export default function ElderPageComponent({ user }) {
-  const dispatch = useDispatch();
   const {
     isLoading,
     error,
     address: addressList,
-  } = useSelector((s) => s.address);
+    createAddress,
+    fetchAddress,
+  } = useAddressContext();
   const [helpRequests, setHelpRequests] = useState([]);
   const [showAddress, setShhowAddress] = useState(false);
   const [formData, setFormdata] = useState(initialAddress);

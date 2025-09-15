@@ -4,8 +4,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import styles from "../styles/commonStyles.module.css";
 import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
-import { login } from "@/app/provider/authSlice";
+import { useAuthContext } from "@/context/authContext";
 
 export const initialLoginFormdata = {
   email: "",
@@ -15,25 +14,22 @@ export const initialLoginFormdata = {
 export default function LoginPage() {
   const [formData, setFormData] = useState(initialLoginFormdata);
   const router = useRouter();
-  const dispatch = useDispatch();
-  const { isLoading, error, user } = useSelector((s) => s.auth);
+
+  const { isLoading, error, login, user } = useAuthContext();
   const handleChange = (event) => {
     setFormData((prev) => ({
       ...prev,
       [event.target.name]: event.target.value,
     }));
   };
-
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      const user = await dispatch(
-        login({ email: formData.email, password: formData.password })
-      ).unwrap();
-      console.log(user);
-      if (user?.role === "ADMIN") {
+      const status = await login(formData.email, formData.password);
+      console.log(status);
+      if (status && user?.role === "ADMIN") {
         router.push("/admin");
-      } else if (user?.role === "VOLUNTEER") {
+      } else if (status && user?.role === "VOLUNTEER") {
         router.push("/services");
       } else {
         router.push("/");
