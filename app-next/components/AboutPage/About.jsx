@@ -1,6 +1,5 @@
 "use client";
-import React from "react";
-import styles from "./About.module.css";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
   Rocket,
@@ -10,7 +9,9 @@ import {
   MessageSquareText,
   BadgeCheck,
 } from "lucide-react";
-import { useState } from "react";
+
+import styles from "./About.module.css";
+import Card from "../Card/Card";
 
 const About = () => {
   const aboutSection = [
@@ -18,33 +19,32 @@ const About = () => {
       title: "Who We Are",
       content:
         "Welcome to CareConnect, your trusted partner in finding the best care services.",
-      icon: <Star className={styles.icon} />,
+      icon: <Star />,
     },
     {
       title: "Our Mission",
       content:
         "Our mission is to provide a seamless and reliable platform for discovering, connecting individuals and families with professional and compassionate caregivers. We believe in Humanity and sharing it.",
-      icon: <Rocket className={styles.icon} />,
+      icon: <Rocket />,
     },
     {
       title: "Our Vision",
       content:
         "To be the leading online platform for care services, recognized for our commitment to quality, trust, and customer satisfaction. We envision a world where everyone can easily find the care they need to live healthy and fulfilling lives.",
-      icon: <Gem className={styles.icon} />,
+      icon: <Gem />,
     },
     {
       title: "Our Values",
       content:
         "At CareConnect, we are guided by our core values of integrity, compassion, excellence, and innovation. We strive to uphold these values in everything we do, from the services we offer to the way we interact with our customers and partners.",
-      icon: <UserCheck className={styles.icon} />,
+      icon: <UserCheck />,
     },
     {
       title: "Why Choose CareConnect?",
       content:
-        "Choosing CareConnect means choosing a platform that prioritizes your needs and preferences. We offer a user-friendly interface, comprehensive search options, and access to a wide range of care providers. Our team is dedicated to ensuring that you have a positive experience every step of the way.",
-      icon: <BadgeCheck className={styles.icon} />,
+        "Choosing CareConnect means choosing a platform that prioritizes your needs and preferences. We offer a user-friendly interface, comprehensive search options, and access to a wide range of care providers.",
+      icon: <BadgeCheck />,
     },
-    
   ];
 
   // State and handlers for the contact form
@@ -56,10 +56,7 @@ const About = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e) => {
@@ -72,24 +69,26 @@ const About = () => {
   return (
     <main className={styles.container}>
       <h1 className={styles.title}>About Us</h1>
+
+      {/* About Cards Section */}
       <div className={styles.grid}>
         {aboutSection.map((section, index) => (
-          <div key={index} className={styles.card}>
-            {section.icon}
-            <h2 className={styles.cardTitle}>{section.title}</h2>
-            <p className={styles.content}>{section.content}</p>
-          </div>
+          <Card
+            key={index}
+            title={section.title}
+            content={section.content}
+            icon={section.icon}
+          />
         ))}
       </div>
 
-      {/* Get in Touch Form Section */}
+      {/* Contact Form Section */}
       <div className={styles.formSection}>
         <MessageSquareText className={styles.icon} />
         <h2 className={styles.title}>Get in Touch</h2>
         <p className={styles.formDescription}>
           We would love to hear from you! Whether you have questions, feedback,
-          or need assistance, our customer support team is here to help. Contact
-          us today and let us assist you in finding the perfect solution.
+          or need assistance, our customer support team is here to help.
         </p>
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formGroup}>

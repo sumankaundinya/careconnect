@@ -1,7 +1,26 @@
 import Link from "next/link";
 import styles from "./Homepage.module.css";
+import Card from "../Card/Card";
 
 export default function Homepage() {
+  const featureCards = [
+    {
+      title: "Request Assistance",
+      content:
+        "Elderly people can request help for groceries, transportation, or daily needs.",
+    },
+    {
+      title: "Offer Help",
+      content:
+        "Volunteers and caregivers can provide support to those who need it.",
+    },
+    {
+      title: "Community Support",
+      content:
+        "Build meaningful connections and strengthen the local community.",
+    },
+  ];
+
   return (
     <div className={styles.container}>
       {/* Hero Section */}
@@ -28,30 +47,10 @@ export default function Homepage() {
 
       {/* Features Section */}
       <section className={styles.features}>
-        <div className={styles["feature-card"]}>
-          <h3>Request Assistance</h3>
-          <p>
-            Elderly people can request help for groceries, transportation, or
-            daily needs.
-          </p>
-        </div>
-        <div className={styles["feature-card"]}>
-          <h3>Offer Help</h3>
-          <p>
-            Volunteers and caregivers can provide support to those who need it.
-          </p>
-        </div>
-        <div className={styles["feature-card"]}>
-          <h3>Community Support</h3>
-          <p>
-            Build meaningful connections and strengthen the local community.
-          </p>
-        </div>
+        {featureCards.map((card, index) => (
+          <Card key={index} title={card.title} content={card.content} />
+        ))}
       </section>
-      {/* Footer */}
-      <footer className={styles.footer}>
-        &copy; {new Date().getFullYear()} CareConnect. All rights reserved.
-      </footer>
     </div>
   );
 }
