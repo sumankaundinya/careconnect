@@ -12,8 +12,8 @@ const navItems = [
     to: "/",
   },
   {
-    title: "Request Help",
-    to: "/request-help",
+    title: "Volunteers",
+    to: "/volunteers",
   },
   {
     title: "Offer Help",
@@ -25,7 +25,7 @@ const navItems = [
   },
   {
     title: "Services",
-    to: "/Services",
+    to: "/services",
   },
 ];
 
@@ -77,7 +77,6 @@ export default function Header() {
         aria-hidden={!showMobileMenu}
       >
         <ul className={styles.navList}>
-
           {navItems &&
             navItems.map((item, index) => (
               <li key={index}>
@@ -101,8 +100,6 @@ export default function Header() {
               <Link href="/auth/login">Login</Link>
             </li>
           )}
-
-      
         </ul>
       </nav>
     </header>
