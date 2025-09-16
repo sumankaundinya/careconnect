@@ -103,6 +103,17 @@
   font-size: 16px;
   color: #555;
 }
+.feature-card {
+  transition: transform 200ms ease-in-out;
+
+  transform-origin: center;
+  will-change: transform;
+}
+
+.feature-card:hover {
+  cursor: pointer;
+  transform: scale(1.1);
+}
 
 /* Footer */
 .footer {
@@ -122,5 +133,9 @@
   .features {
     flex-direction: column;
     gap: 20px;
+
+    align-items: center;
+  }
+  .hero {
   }
 }
