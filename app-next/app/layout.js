@@ -1,5 +1,6 @@
 import "./globals.css";
 import Header from "../components/Header/Header";
+import Footer from "../components/Footer/Footer";
 
 export const metadata = {
   title: "CareConnect",
@@ -14,7 +15,8 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <Header />
-        {children}
+        <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );
