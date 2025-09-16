@@ -26,20 +26,22 @@ export default function ElderPageComponent({ user }) {
   const handleAddAddress = async (event) => {
     event.preventDefault();
     try {
-      await dispatch(createAddress(formData)).unwrap();
-      await dispatch(fetchAddress()).unwrap();
+      const result = await createAddress(formData);
 
       setFormdata(initialAddress);
-      setShhowAddress(false);
       alert("AddressCreated Successfully");
+      fetchAddressNow();
+      setShhowAddress(false);
     } catch (error) {
-      console.log(error);
       alert(error || "failed to create Address");
     }
   };
+  const fetchAddressNow = async () => {
+    await fetchAddress();
+  };
   useEffect(() => {
-    dispatch(fetchAddress());
-  }, [dispatch]);
+    fetchAddressNow();
+  }, []);
   const handleEditAddress = async (addressId) => {
     console.log(addressId);
   };
