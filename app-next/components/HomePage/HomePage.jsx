@@ -1,10 +1,19 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import styles from "./Homepage.module.css";
 
 export default function Homepage() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
+
   return (
     <div className={styles.container}>
-      {/* Hero Section */}
       <section className={styles.hero}>
         <div className={styles.heroCard}>
           <h1>CareConnect</h1>
@@ -16,17 +25,10 @@ export default function Homepage() {
             >
               Volunteers
             </Link>
-            <Link
-              href="/offer-help"
-              className={`${styles.button} ${styles.offer}`}
-            >
-              Offer Help
-            </Link>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
       <section className={styles.features}>
         <div className={styles["feature-card"]}>
           <h3>Request Assistance</h3>
@@ -48,7 +50,7 @@ export default function Homepage() {
           </p>
         </div>
       </section>
-      {/* Footer */}
+
       <footer className={styles.footer}>
         &copy; {new Date().getFullYear()} CareConnect. All rights reserved.
       </footer>

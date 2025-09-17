@@ -2,6 +2,7 @@ import { API_ROUTES } from "@/utils/api";
 import axios from "axios";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+
 const axiosInstance = axios.create({
   baseURL: API_ROUTES.AUTH,
   withCredentials: true,
@@ -11,8 +12,10 @@ export const useAuthStore = create(
   persist(
     (set, get) => ({
       user: null,
+      token: null,
       error: null,
       isLoading: false,
+
       register: async (name, email, password, role) => {
         set({ isLoading: true, error: null });
         try {
@@ -29,11 +32,12 @@ export const useAuthStore = create(
             isLoading: false,
             error: axios.isAxiosError(error)
               ? error?.response?.data.error
-              : "Login Failed",
+              : "Register Failed",
           });
           return null;
         }
       },
+
       login: async (email, password) => {
         set({ isLoading: true, error: null });
         try {
@@ -41,8 +45,11 @@ export const useAuthStore = create(
             email,
             password,
           });
-          set({ isLoading: false, user: response.data.user });
-          return true;
+
+          const { accessToken, user } = response.data; 
+
+          set({ isLoading: false, user, token: accessToken });
+          return { accessToken, user }; 
         } catch (error) {
           set({
             isLoading: false,
@@ -53,11 +60,12 @@ export const useAuthStore = create(
           return null;
         }
       },
+
       logout: async () => {
         set({ isLoading: true, error: null });
         try {
           await axiosInstance.post("/logout");
-          set({ user: null, isLoading: false, error: null });
+          set({ user: null, token: null, isLoading: false, error: null });
         } catch (error) {
           set({
             isLoading: false,
@@ -68,6 +76,9 @@ export const useAuthStore = create(
         }
       },
     }),
-    { name: "auth-storage", partialize: (state) => ({ user: state.user }) }
+    {
+      name: "auth-storage",
+      partialize: (state) => ({ user: state.user, token: state.token }),
+    }
   )
 );

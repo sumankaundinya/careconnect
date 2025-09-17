@@ -1,111 +1,103 @@
-import brcypt from "bcrypt";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import db from "../database.js";
+import crypto from "crypto";
 
-/* concept of accesstoken and refresh token will be introduced later */
-function generateToken(userId, email, role) {
-  const accessToken = jwt.sign(
-    {
-      userId,
-      email,
-      role,
-    },
-    process.env.JWT_SECRET,
-    { expiresIn: "60m" }
-  );
-  return { accessToken };
-}
-async function setToken(res, accessToken) {
-  res.cookie("accessToken", accessToken, {
-    httpOnly: true,
-    sameSite: "none",
-    secure: true,
-    maxAge: 60 * 60 * 1000,
-    domain: "localhost",
+function generateToken(id, email, role) {
+  return jwt.sign({ id, email, role }, process.env.JWT_SECRET, {
+    expiresIn: "60m",
   });
 }
+
 export const register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
+
     const existingUser = await db("User").where({ email }).first();
     if (existingUser) {
-      res.status(400).json({
+      return res.status(400).json({
         success: false,
-        error: "User with email address already exists",
+        error: "User with this email already exists",
       });
-      return;
     }
 
-    const hashPassword = await brcypt.hash(password, 12);
-    const [newlCreatedUser] = await db("User")
+    const hashPassword = await bcrypt.hash(password, 12);
+
+    const [newUser] = await db("User")
       .insert({
+        id: crypto.randomUUID(),
         name,
         email,
         password: hashPassword,
         role,
       })
       .returning("*");
+
+    await db("volunteers").insert({
+      user_id: newUser.id,
+      name: newUser.name,
+      email: newUser.email,
+      phone_nr: "",
+      address: "",
+      routine: "",
+      photo: "",
+      gender: "",
+    });
+
     res.status(201).json({
-      message: "User Created Successfully",
-      userId: newlCreatedUser.id,
+      success: true,
+      message: "User created successfully",
+      userId: newUser.id,
     });
   } catch (error) {
+    console.error(error);
     res.status(400).json({
       success: false,
-      error: "Unable to register , Please tr again later",
+      error: "Unable to register. Please try again later",
     });
   }
 };
+
 export const login = async (req, res) => {
   const { email, password } = req.body;
-  try {
-    const getCurrentUser = await db("User").where({ email }).first();
 
-    const isCorrectPassword = await brcypt.compare(
-      password,
-      getCurrentUser.password
-    );
-    if (!getCurrentUser || !isCorrectPassword) {
-      res.status(401).json({
-        success: false,
-        error: "User with email address Not found or password didn't match ",
-      });
-      return;
+  try {
+    const user = await db("User").where({ email }).first();
+    if (!user) {
+      return res.status(401).json({ success: false, error: "User not found" });
     }
-    const { accessToken } = generateToken(
-      getCurrentUser.id,
-      getCurrentUser.email,
-      getCurrentUser.role
-    );
-    await setToken(res, accessToken);
-    res.status(201).json({
-      message: "Login Successful",
+
+    const isCorrectPassword = await bcrypt.compare(password, user.password);
+    if (!isCorrectPassword) {
+      return res
+        .status(401)
+        .json({ success: false, error: "Invalid password" });
+    }
+
+    const accessToken = generateToken(user.id, user.email, user.role);
+
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      accessToken,
       user: {
-        id: getCurrentUser.id,
-        email: getCurrentUser.email,
-        name: getCurrentUser.name,
-        role: getCurrentUser.role,
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
       },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: "Unable to Login",
-    });
+    console.error(error);
+    res
+      .status(500)
+      .json({ success: false, error: "Unable to login. Try again" });
   }
 };
 
 export const logOut = async (req, res) => {
-  res.clearCookie("accessToken", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    domain: "localhost",
-    path: "/",
-  });
-
   res.json({
     success: true,
-    message: "Logout Successfully",
+    message: "Logout successful",
   });
 };

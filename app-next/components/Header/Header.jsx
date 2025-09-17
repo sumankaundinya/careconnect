@@ -1,4 +1,5 @@
 "use client";
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import styles from "./Header.module.css";
@@ -6,27 +7,12 @@ import { Menu } from "lucide-react";
 import Image from "next/image";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
+
 const navItems = [
-  {
-    title: "Home",
-    to: "/",
-  },
-  {
-    title: "Volunteers",
-    to: "/volunteers",
-  },
-  {
-    title: "Offer Help",
-    to: "/offer-help",
-  },
-  {
-    title: "About",
-    to: "/About",
-  },
-  {
-    title: "Services",
-    to: "/services",
-  },
+  { title: "Home", to: "/" },
+  { title: "Volunteers", to: "/volunteers" },
+  { title: "About", to: "/About" },
+  { title: "Services", to: "/services" },
 ];
 
 export default function Header() {
@@ -36,22 +22,20 @@ export default function Header() {
   const router = useRouter();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  const toggleMenu = () => {
-    setShowMobileMenu((prev) => !prev);
-  };
+
+  const toggleMenu = () => setShowMobileMenu((prev) => !prev);
+
   const handleLogout = async () => {
-    console.log("logout");
     await logout();
     router.push("/");
   };
+
   return (
-    <header className={`${styles.header} ${scrolled ? styles.scrolled : ""} `}>
+    <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
       <div className={styles.topHeader}>
         <div className={styles.logo}>
           <Link href="/" className={styles.logoLink}>
@@ -77,24 +61,24 @@ export default function Header() {
         aria-hidden={!showMobileMenu}
       >
         <ul className={styles.navList}>
-          {navItems &&
-            navItems.map((item, index) => (
-              <li key={index}>
-                <Link href={item.to}>{item.title}</Link>
-              </li>
-            ))}
+          {navItems.map((item, index) => (
+            <li key={index}>
+              <Link href={item.to}>{item.title}</Link>
+            </li>
+          ))}
+
+          {user?.role === "VOLUNTEER" && (
+            <li>
+              <Link href="/my-profile">My Profile</Link>
+            </li>
+          )}
+
           {user ? (
-            <>
-              <li>
-                {" "}
-                <Link href={"account"}>My Account</Link>
-              </li>
-              <li>
-                <button onClick={handleLogout} className={styles.menuButton}>
-                  Logout
-                </button>
-              </li>
-            </>
+            <li>
+              <button onClick={handleLogout} className={styles.menuButton}>
+                Logout
+              </button>
+            </li>
           ) : (
             <li>
               <Link href="/auth/login">Login</Link>

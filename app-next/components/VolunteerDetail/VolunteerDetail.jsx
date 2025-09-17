@@ -29,50 +29,47 @@ const VolunteerDetail = ({ volunteerId }) => {
 
   return (
     <div className={styles.volunteerDetail}>
+      <h1>Volunteer Details</h1>
       <h2>{volunteer.name}</h2>
-      <p>Email: {volunteer.email}</p>
-      <p>Phone: {volunteer.phone_nr}</p>
-      <p>Gender: {volunteer.gender}</p>
-      <p>Address: {volunteer.address}</p>
-      <p>Routine: {volunteer.routine || "Not specified"}</p>
+      <span>Email: {volunteer.email}</span>
+      <br />
+      <span>Phone: {volunteer.phone_nr}</span>
+      <br />
+      <span>Gender: {volunteer.gender}</span>
+      <br />
+      <span>Address: {volunteer.address}</span>
+      <br />
+      <span>Routine: {volunteer.routine || "Not specified"}</span>
+      <br />
 
-      <p>
-        Availability:{" "}
+      <div>
+        <span>Services & Availability:</span>
         {volunteer.availability?.length
-          ? volunteer.availability
-              .map((date) =>
-                new Date(date).toLocaleString("en-GB", {
+          ? volunteer.availability.map((slot, idx) => (
+              <div key={idx}>
+                <span>
+                  {idx + 1}. {slot.service}
+                </span>
+                <br />
+                From:{" "}
+                {new Date(slot.available_from).toLocaleString("en-GB", {
                   day: "2-digit",
                   month: "short",
                   year: "numeric",
                   hour: "2-digit",
                   minute: "2-digit",
-                })
-              )
-              .join(", ")
+                })}{" "}
+                → To:{" "}
+                {new Date(slot.available_to).toLocaleString("en-GB", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </div>
+            ))
           : "Not specified"}
-      </p>
-      <p>
-        Services:{" "}
-        {volunteer.services?.length
-          ? volunteer.services.join(", ")
-          : "Not specified"}
-      </p>
-
-      <div className={styles.reviews}>
-        <h3>Reviews:</h3>
-        {volunteer.reviews?.length ? (
-          <ul>
-            {volunteer.reviews.map((review) => (
-              <li key={review.id}>
-                <strong>{review.user}</strong> ({review.stars}⭐):{" "}
-                {review.description}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No reviews yet.</p>
-        )}
       </div>
     </div>
   );

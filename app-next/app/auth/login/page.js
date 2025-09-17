@@ -25,19 +25,24 @@ export default function LoginPage() {
   const handleLogin = async (event) => {
     event.preventDefault();
 
-    const loginSuccess = await login(formData.email, formData.password);
-    if (loginSuccess) {
-      alert("login Successful");
-      const user = useAuthStore.getState().user;
-      if (user?.role === "ADMIN") {
-        router.push("/admin");
-      } else if (user?.role === "VOLUNTEER") {
-        router.push("/services");
-      } else {
-        router.push("/");
-      }
+    const loginResponse = await login(formData.email, formData.password);
+
+    if (loginResponse) {
+      const { accessToken, user } = loginResponse;
+
+      // Save to localStorage
+      localStorage.setItem("token", accessToken);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      // Update zustand store
+      useAuthStore.setState({ token: accessToken, user });
+
+      // Redirect based on role
+      if (user.role === "ADMIN") router.push("/admin");
+      else if (user.role === "VOLUNTEER") router.push("/my-profile");
+      else router.push("/");
     } else {
-      console.log(error);
+      console.log("Login failed", error);
     }
   };
 

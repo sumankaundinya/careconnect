@@ -3,7 +3,6 @@ import db from "../database.js";
 
 const router = express.Router();
 
-// Get all available times
 router.get("/", async (req, res) => {
   try {
     const result = await db("available_time").select("*");
@@ -14,17 +13,22 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Add available time
 router.post("/", async (req, res) => {
   try {
-    const { user_id, volunteer_id, service_id, date } = req.body;
+    const { volunteer_id, service_id, available_from, available_to } = req.body;
+
     const [result] = await db("available_time")
-      .insert({ user_id, volunteer_id, service_id, date })
+      .insert({
+        volunteer_id,
+        service_id,
+        available_from,
+        available_to,
+      })
       .returning("*");
 
     res.status(201).json(result);
   } catch (err) {
-    console.error(err);
+    console.error("Error inserting available_time:", err);
     res.status(500).json({ error: "Database error" });
   }
 });

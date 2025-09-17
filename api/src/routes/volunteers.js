@@ -28,9 +28,15 @@ router.get("/:id", async (req, res) => {
     volunteer.services = services.map((s) => s.description);
 
     const availability = await db("available_time")
-      .where({ volunteer_id: id })
-      .select("date");
-    volunteer.availability = availability.map((a) => a.date);
+      .join("services", "available_time.service_id", "services.id")
+      .where("available_time.volunteer_id", id)
+      .select(
+        "available_time.available_from",
+        "available_time.available_to",
+        "services.description as service"
+      );
+
+    volunteer.availability = availability;
 
     const reviews = await db("reviews")
       .join("elders", "reviews.user_id", "elders.id")

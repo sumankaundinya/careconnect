@@ -1,9 +1,8 @@
 import express from "express";
-import db from "../database.js"; // pool is imported from database.js to interact with the database
+import db from "../database.js";
 
 const router = express.Router();
 
-// Get all elders
 router.get("/", async (req, res) => {
   try {
     const result = await db("elders").select("*");
@@ -14,7 +13,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Get single elder
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -26,7 +24,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// Create elder
 router.post("/", async (req, res) => {
   try {
     const {
@@ -58,7 +55,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Update elder
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -84,7 +80,6 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// Delete elder
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;

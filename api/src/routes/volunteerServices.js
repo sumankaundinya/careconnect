@@ -3,7 +3,6 @@ import db from "../database.js";
 
 const router = express.Router();
 
-// Get all volunteer-services relations
 router.get("/", async (req, res) => {
   try {
     const result = await db("volunteer_services").select("*");
@@ -14,7 +13,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Add a volunteer-service relation
 router.post("/", async (req, res) => {
   try {
     const { volunteer_id, service_id } = req.body;
@@ -28,7 +26,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Delete relation (unassign a service from a volunteer)
 router.delete("/:volunteer_id/:service_id", async (req, res) => {
   try {
     const { volunteer_id, service_id } = req.params;

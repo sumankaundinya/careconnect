@@ -12,6 +12,7 @@ import servicesRouter from "./routes/services.js";
 import volunteerServicesRouter from "./routes/volunteerServices.js";
 import availableTimeRouter from "./routes/availableTime.js";
 import bodyParser from "body-parser";
+import meRouter from "./routes/me.js";
 
 import reviewsRouter from "./routes/reviews.js";
 const corsOptions = {
@@ -34,6 +35,7 @@ app.use("/api/services", servicesRouter);
 app.use("/api/volunteer-services", volunteerServicesRouter);
 app.use("/api/available-time", availableTimeRouter);
 app.use("/api/reviews", reviewsRouter);
+app.use("/api/me", meRouter);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

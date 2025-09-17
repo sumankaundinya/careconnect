@@ -3,7 +3,6 @@ import db from "../database.js";
 
 const router = express.Router();
 
-// GET all services
 router.get("/", async (req, res) => {
   try {
     const result = await db("services").select("*");
@@ -14,7 +13,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET service by id
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -29,7 +27,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// POST new service
 router.post("/", async (req, res) => {
   try {
     const { description } = req.body;
@@ -43,7 +40,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// PUT update service
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -67,7 +63,6 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// DELETE service
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
