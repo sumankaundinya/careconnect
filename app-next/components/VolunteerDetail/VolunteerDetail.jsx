@@ -1,90 +1,64 @@
 "use client";
-
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./VolunteerDetail.module.css";
-import { useRouter } from "next/navigation";
-
-const mockVolunteers = [
-  {
-    id: 1,
-    name: "Anna Smith",
-    email: "anna@example.com",
-    phone_nr: "12345678",
-    address: "Copenhagen",
-    photo: "/images/volunteer1.jpg",
-    services: ["Shopping", "Cooking"],
-    gender: "Female",
-    routine: "Morning",
-    availability: "Weekdays, 9am - 1pm",
-  },
-  {
-    id: 2,
-    name: "John Doe",
-    email: "john@example.com",
-    phone_nr: "87654321",
-    address: "Aarhus",
-    photo: "/images/volunteer2.jpg",
-    services: ["Gardening", "Companionship"],
-    gender: "Male",
-    routine: "Evening",
-    availability: "Weekends, 4pm - 8pm",
-  },
-];
 
 const VolunteerDetail = ({ volunteerId }) => {
   const [volunteer, setVolunteer] = useState(null);
-  const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const v = mockVolunteers.find((v) => v.id === Number(volunteerId));
-    setVolunteer(v);
+    const fetchVolunteer = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/volunteers/${volunteerId}`
+        );
+
+        const data = await res.json();
+        setVolunteer(data);
+      } catch (error) {
+        console.error("Failed to fetch volunteer:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVolunteer();
   }, [volunteerId]);
 
-  if (!volunteer) return <p>Loading volunteer details...</p>;
+  if (loading) return <p>Loading volunteer...</p>;
+  if (!volunteer) return <p>Volunteer not found.</p>;
 
   return (
-    <div className={styles.container}>
-      <button onClick={() => router.back()} className={styles.backButton}>
-        ← Back
-      </button>
+    <div className={styles.volunteerDetail}>
+      <h2>{volunteer.name}</h2>
+      <p>Email: {volunteer.email}</p>
+      <p>Phone: {volunteer.phone_nr}</p>
+      <p>Gender: {volunteer.gender}</p>
+      <p>Address: {volunteer.address}</p>
+      <p>Routine: {volunteer.routine || "Not specified"}</p>
 
-      <div className={styles.header}>
-        <h1>{volunteer.name}</h1>
-      </div>
-
-      <div className={styles.details}>
-        <div className={styles.imageContainer}>
-          {volunteer.photo ? (
-            <img src={volunteer.photo} alt={volunteer.name} />
-          ) : (
-            <div className={styles.placeholder}></div>
-          )}
-        </div>
-
-        <div className={styles.info}>
-          <p>
-            <strong>Email:</strong> {volunteer.email}
-          </p>
-          <p>
-            <strong>Phone:</strong> {volunteer.phone_nr}
-          </p>
-          <p>
-            <strong>Address:</strong> {volunteer.address}
-          </p>
-          <p>
-            <strong>Gender:</strong> {volunteer.gender}
-          </p>
-          <p>
-            <strong>Routine:</strong> {volunteer.routine}
-          </p>
-          <p>
-            <strong>Availability:</strong> {volunteer.availability}
-          </p>
-          <p>
-            <strong>Services:</strong> {volunteer.services.join(", ")}
-          </p>
-        </div>
-      </div>
+      <p>
+        Availability:{" "}
+        {volunteer.availability?.length
+          ? volunteer.availability
+              .map((date) =>
+                new Date(date).toLocaleString("en-GB", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              )
+              .join(", ")
+          : "Not specified"}
+      </p>
+      <p>
+        Services:{" "}
+        {volunteer.services?.length
+          ? volunteer.services.join(", ")
+          : "Not specified"}
+      </p>
     </div>
   );
 };

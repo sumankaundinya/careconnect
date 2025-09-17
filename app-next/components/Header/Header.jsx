@@ -14,8 +14,8 @@ const navItems = [
     to: "/",
   },
   {
-    title: "Request Help",
-    to: "/request-help",
+    title: "Volunteers",
+    to: "/volunteers",
   },
   {
     title: "Offer Help",
@@ -27,7 +27,7 @@ const navItems = [
   },
   {
     title: "Services",
-    to: "/Services",
+    to: "/services",
   },
 ];
 

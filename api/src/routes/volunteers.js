@@ -3,7 +3,7 @@ import db from "../database.js";
 
 const router = express.Router();
 
-// 1️.Get all volunteers
+
 router.get("/", async (req, res) => {
   try {
     const result = await db("volunteers").select("*");
@@ -14,22 +14,34 @@ router.get("/", async (req, res) => {
   }
 });
 
-// 2.Get single volunteer by id
+
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await db("volunteers").where({ id }).first();
-    if (!result) {
+
+    const volunteer = await db("volunteers").where({ id }).first();
+    if (!volunteer)
       return res.status(404).json({ error: "Volunteer not found" });
-    }
-    res.json(result);
+
+    const services = await db("volunteer_services")
+      .join("services", "volunteer_services.service_id", "services.id")
+      .where("volunteer_services.volunteer_id", id)
+      .select("services.description");
+    volunteer.services = services.map((s) => s.description);
+
+    const availability = await db("available_time")
+      .where({ volunteer_id: id })
+      .select("date");
+    volunteer.availability = availability.map((a) => a.date);
+
+    res.json(volunteer);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Database error" });
   }
 });
 
-// 3.Create a new volunteer
+
 router.post("/", async (req, res) => {
   try {
     const { name, email, phone_nr, address, post_nr, routine, photo, gender } =
@@ -53,7 +65,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// 4.Update volunteer
+
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -71,7 +83,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// 5.Delete volunteer
+
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;

@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./Volunteer.module.css";
+import styles from "../Volunteer/Volunteer.module.css";
 import Link from "next/link";
 
 const Volunteer = ({ volunteer }) => {
@@ -21,7 +21,6 @@ const Volunteer = ({ volunteer }) => {
 
       <div className={styles.content}>
         <h3 className={styles.name}>{volunteer.name}</h3>
-        <p className={styles.address}>{volunteer.address}</p>
         <p className={styles.services}>
           Services:{" "}
           {volunteer.services?.length
@@ -29,7 +28,10 @@ const Volunteer = ({ volunteer }) => {
             : "Not specified"}
         </p>
         <p className={styles.availability}>
-          Availability: {volunteer.availability || "Not specified"}
+          Availability:{" "}
+          {volunteer.availability?.length
+            ? volunteer.availability.join(", ")
+            : "Not specified"}
         </p>
         <Link
           href={`/volunteers/${volunteer.id}`}

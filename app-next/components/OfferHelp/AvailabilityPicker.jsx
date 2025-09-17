@@ -13,7 +13,7 @@ export default function AvailabilityPicker({
         <label className={styles.label}>Available From:</label>
         <input
           type="datetime-local"
-          value={availableFrom}
+          value={availableFrom || ""}
           onChange={(e) => setAvailableFrom(e.target.value)}
           className={styles.input}
           required
@@ -24,7 +24,7 @@ export default function AvailabilityPicker({
         <label className={styles.label}>Available To:</label>
         <input
           type="datetime-local"
-          value={availableTo}
+          value={availableTo || ""}
           onChange={(e) => setAvailableTo(e.target.value)}
           className={styles.input}
           required
