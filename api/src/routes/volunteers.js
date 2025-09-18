@@ -3,6 +3,7 @@ import db from "../database.js";
 
 const router = express.Router();
 
+
 router.get("/", async (req, res) => {
   try {
     const result = await db("volunteers").select("*");
@@ -12,6 +13,7 @@ router.get("/", async (req, res) => {
     res.status(500).json({ error: "Database error" });
   }
 });
+
 
 router.get("/:id", async (req, res) => {
   try {
@@ -38,23 +40,13 @@ router.get("/:id", async (req, res) => {
 
     volunteer.availability = availability;
 
-    const reviews = await db("reviews")
-      .join("elders", "reviews.user_id", "elders.id")
-      .where("reviews.volunteer_id", id)
-      .select(
-        "reviews.id",
-        "elders.name as user",
-        "reviews.description",
-        "reviews.stars"
-      );
-    volunteer.reviews = reviews;
-
     res.json(volunteer);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Database error" });
   }
 });
+
 
 router.post("/", async (req, res) => {
   try {
@@ -79,6 +71,7 @@ router.post("/", async (req, res) => {
   }
 });
 
+
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -95,6 +88,7 @@ router.put("/:id", async (req, res) => {
     res.status(500).json({ error: "Database error" });
   }
 });
+
 
 router.delete("/:id", async (req, res) => {
   try {

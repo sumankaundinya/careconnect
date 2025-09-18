@@ -1,0 +1,32 @@
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease;
+  text-align: center;
+}
+
+.card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 1rem;
+  color: #0070f3; /* CareConnect primary color */
+}
+
+.cardTitle {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.cardContent {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.5;
+}

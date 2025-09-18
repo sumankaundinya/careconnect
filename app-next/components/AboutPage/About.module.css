@@ -4,31 +4,6 @@
   padding: 2rem;
 }
 
-.card {
-  background: #fff;
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: box-shadow 0.3s ease;
-  margin-bottom: 2rem; /* Added margin between sections */
-}
-
-.icon {
-  width: 32px;
-  height: 32px;
-  margin-bottom: 1rem;
-  color: #0070f3; /* CareConnect primary color */
-}
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-}
-
-.card:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-}
-
 .title {
   font-size: 2.5rem;
   text-align: center;
@@ -36,22 +11,25 @@
   font-weight: bold;
 }
 
-.content {
-  font-size: 0.95rem;
-  color: #555;
-  line-height: 1.5;
+/* Grid for cards */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 4rem;
 }
 
+/* Contact Form Section */
 .formSection {
   margin-top: 4rem;
   padding: 2rem;
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  text-align: center;
 }
 
 .formDescription {
-  text-align: center;
   margin-bottom: 2rem;
   color: #555;
   max-width: 600px;
@@ -70,6 +48,7 @@
 .formGroup {
   display: flex;
   flex-direction: column;
+  text-align: left;
 }
 
 .label {
@@ -119,4 +98,11 @@
 .backLink {
   text-align: center;
   margin-top: 2rem;
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 1rem;
+  color: #0070f3; /* CareConnect primary color */
 }
