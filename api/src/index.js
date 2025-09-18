@@ -14,6 +14,7 @@ import availableTimeRouter from "./routes/availableTime.js";
 import bodyParser from "body-parser";
 
 import reviewsRouter from "./routes/reviews.js";
+import aboutRouter from "./routes/aboutRoutes.js";
 const corsOptions = {
   origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
   credentials: true,
@@ -34,6 +35,7 @@ app.use("/api/services", servicesRouter);
 app.use("/api/volunteer-services", volunteerServicesRouter);
 app.use("/api/available-time", availableTimeRouter);
 app.use("/api/reviews", reviewsRouter);
+app.use("/api/about", aboutRouter);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
