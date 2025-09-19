@@ -55,6 +55,10 @@ export default function OfferHelpForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (new Date(availableTo) <= new Date(availableFrom)) {
+      alert('"Available to" must be later than "Available from"');
+      return;
+    }
     if (!volunteerId) {
       alert("You must be logged in to submit.");
       return;
