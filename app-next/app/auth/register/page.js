@@ -4,7 +4,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import styles from "../styles/commonStyles.module.css";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthContext } from "@/context/authContext";
 
 export const initialLoginFormdata = {
   email: "",
@@ -15,9 +15,9 @@ export const initialLoginFormdata = {
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState(initialLoginFormdata);
+  const { register, error, isLoading, setError } = useAuthContext();
 
   const router = useRouter();
-  const { isLoading, register, error } = useAuthStore();
   const handleChange = (event) => {
     setFormData((prev) => ({
       ...prev,
@@ -25,27 +25,27 @@ export default function RegisterPage() {
     }));
   };
 
-  const handleLogin = async (event) => {
+  const handleRegister = async (event) => {
     event.preventDefault();
-
-    const userId = await register(
-      formData.name,
-      formData.email,
-      formData.password,
-      formData.role
-    );
-    console.log("user id", userId);
-    if (userId) {
+    try {
+      const userId = await register(
+        formData.email,
+        formData.name,
+        formData.password,
+        formData.role
+      );
+    } catch (error) {
+      setError(error);
+      console.log(error);
+    } finally {
       alert("Registration Successful");
       router.push("/auth/login");
-    } else {
-      console.log(error);
     }
   };
 
   return (
     <AuthLayout>
-      <form onSubmit={handleLogin} className={styles.form}>
+      <form onSubmit={handleRegister} className={styles.form}>
         <div className={styles.field}>
           <label htmlFor="name" className={styles.label}>
             Name

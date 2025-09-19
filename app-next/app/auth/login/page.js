@@ -4,7 +4,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import styles from "../styles/commonStyles.module.css";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthContext } from "@/context/authContext";
 
 export const initialLoginFormdata = {
   email: "",
@@ -14,30 +14,28 @@ export const initialLoginFormdata = {
 export default function LoginPage() {
   const [formData, setFormData] = useState(initialLoginFormdata);
   const router = useRouter();
-  const { isLoading, login, error } = useAuthStore();
+
+  const { isLoading, error, login, user } = useAuthContext();
   const handleChange = (event) => {
     setFormData((prev) => ({
       ...prev,
       [event.target.name]: event.target.value,
     }));
   };
-
   const handleLogin = async (event) => {
     event.preventDefault();
-
-    const loginSuccess = await login(formData.email, formData.password);
-    if (loginSuccess) {
-      alert("login Successful");
-      const user = useAuthStore.getState().user;
-      if (user?.role === "ADMIN") {
+    try {
+      const status = await login(formData.email, formData.password);
+      console.log(status);
+      if (status && user?.role === "ADMIN") {
         router.push("/admin");
-      } else if (user?.role === "VOLUNTEER") {
+      } else if (status && user?.role === "VOLUNTEER") {
         router.push("/services");
       } else {
         router.push("/");
       }
-    } else {
-      console.log(error);
+    } catch (error) {
+      alert(error || "login Error");
     }
   };
 

@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import styles from "./Header.module.css";
 import { Menu } from "lucide-react";
 import Image from "next/image";
-import { useAuthStore } from "@/store/useAuthStore";
+
 import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/context/authContext";
+
 const navItems = [
   {
     title: "Home",
@@ -32,7 +34,7 @@ const navItems = [
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const { user, logout } = useAuthStore();
+  const { user, logout } = useAuthContext();
   const router = useRouter();
 
   useEffect(() => {
@@ -46,9 +48,13 @@ export default function Header() {
     setShowMobileMenu((prev) => !prev);
   };
   const handleLogout = async () => {
-    console.log("logout");
-    await logout();
-    router.push("/");
+    try {
+      await logout();
+
+      router.push("/");
+    } catch (error) {
+      alert(error || "logout Error");
+    }
   };
   return (
     <header className={`${styles.header} ${scrolled ? styles.scrolled : ""} `}>
@@ -83,6 +89,11 @@ export default function Header() {
                 <Link href={item.to}>{item.title}</Link>
               </li>
             ))}
+          {user && user.role === "ELDER" && (
+            <li>
+              <Link href={"volunteers"}>Volunteers</Link>
+            </li>
+          )}
           {user ? (
             <>
               <li>
