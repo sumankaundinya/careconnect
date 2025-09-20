@@ -6,8 +6,6 @@ export default function ServiceSelect({
   setSelectedService,
   styles,
 }) {
-  const isArray = Array.isArray(services);
-
   return (
     <div className={styles.formGroup}>
       <label className={styles.label}>Choose a service:</label>
@@ -19,7 +17,7 @@ export default function ServiceSelect({
       >
         <option value="">-- Select a service --</option>
 
-        {isArray && services.length > 0 ? (
+        {Array.isArray(services) && services.length > 0 ? (
           services.map((service) => (
             <option key={service.id} value={service.id}>
               {service.description}

@@ -3,7 +3,6 @@ import db from "../database.js";
 
 const router = express.Router();
 
-
 router.get("/", async (req, res) => {
   try {
     const result = await db("volunteers").select("*");
@@ -13,7 +12,6 @@ router.get("/", async (req, res) => {
     res.status(500).json({ error: "Database error" });
   }
 });
-
 
 router.get("/:id", async (req, res) => {
   try {
@@ -30,9 +28,16 @@ router.get("/:id", async (req, res) => {
     volunteer.services = services.map((s) => s.description);
 
     const availability = await db("available_time")
-      .where({ volunteer_id: id })
-      .select("date");
-    volunteer.availability = availability.map((a) => a.date);
+      .join("services", "available_time.service_id", "services.id")
+      .where("available_time.volunteer_id", id)
+      .select(
+        "available_time.id",
+        "available_time.available_from",
+        "available_time.available_to",
+        "services.description as service"
+      );
+
+    volunteer.availability = availability;
 
     res.json(volunteer);
   } catch (err) {
@@ -40,7 +45,6 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Database error" });
   }
 });
-
 
 router.post("/", async (req, res) => {
   try {
@@ -65,7 +69,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -82,7 +85,6 @@ router.put("/:id", async (req, res) => {
     res.status(500).json({ error: "Database error" });
   }
 });
-
 
 router.delete("/:id", async (req, res) => {
   try {

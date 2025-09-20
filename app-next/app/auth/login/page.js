@@ -4,7 +4,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import styles from "../styles/commonStyles.module.css";
 import { useRouter } from "next/navigation";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export const initialLoginFormdata = {
   email: "",
@@ -15,27 +15,46 @@ export default function LoginPage() {
   const [formData, setFormData] = useState(initialLoginFormdata);
   const router = useRouter();
 
-  const { isLoading, error, login, user } = useAuthContext();
   const handleChange = (event) => {
     setFormData((prev) => ({
       ...prev,
       [event.target.name]: event.target.value,
     }));
   };
+
   const handleLogin = async (event) => {
     event.preventDefault();
+
     try {
-      const status = await login(formData.email, formData.password);
-      console.log(status);
-      if (status && user?.role === "ADMIN") {
-        router.push("/admin");
-      } else if (status && user?.role === "VOLUNTEER") {
-        router.push("/services");
-      } else {
-        router.push("/");
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Login failed");
       }
-    } catch (error) {
-      alert(error || "login Error");
+
+      const loginResponse = await res.json();
+      const { accessToken, user } = loginResponse;
+
+      localStorage.setItem("token", accessToken);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      useAuthStore.setState({ token: accessToken, user });
+
+      if (user.role === "ADMIN") router.push("/admin");
+      else if (user.role === "VOLUNTEER") router.push("/my-profile");
+      else router.push("/");
+    } catch (err) {
+      console.error("Login failed:", err);
+      alert("Login failed. Please check your credentials.");
     }
   };
 
@@ -73,9 +92,9 @@ export default function LoginPage() {
             className={styles.input}
           />
         </div>
-        {error && <p className={styles.red}>{error}</p>}
+
         <button type="submit" className={styles.button}>
-          {isLoading ? " Login in.." : "Login"}
+          Login
         </button>
 
         <p className={styles.helper}>

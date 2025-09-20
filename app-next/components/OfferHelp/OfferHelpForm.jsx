@@ -11,22 +11,58 @@ export default function OfferHelpForm() {
   const [selectedService, setSelectedService] = useState("");
   const [availableFrom, setAvailableFrom] = useState("");
   const [availableTo, setAvailableTo] = useState("");
+  const [volunteerId, setVolunteerId] = useState(null);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
-    fetch(`${API_URL}/api/services`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Fetched services:", data);
+    const fetchVolunteer = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      try {
+        const res = await fetch(`${API_URL}/api/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error("Failed to fetch volunteer profile");
+        const data = await res.json();
+        setVolunteerId(data.id);
+      } catch (err) {
+        console.error("Error fetching volunteer:", err);
+      }
+    };
+
+    fetchVolunteer();
+  }, [API_URL]);
+
+  useEffect(() => {
+    if (!API_URL) return;
+
+    const fetchServices = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/services`);
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+        const data = await res.json();
         setServices(data);
-      })
-      .catch((err) => console.error("Error fetching services:", err));
+      } catch (err) {
+        console.error("Error fetching services:", err);
+      }
+    };
+
+    fetchServices();
   }, [API_URL]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const volunteerId = 1;
+    if (new Date(availableTo) <= new Date(availableFrom)) {
+      alert('"Available to" must be later than "Available from"');
+      return;
+    }
+    if (!volunteerId) {
+      alert("You must be logged in to submit.");
+      return;
+    }
 
     try {
       await fetch(`${API_URL}/api/volunteer-services`, {
@@ -43,6 +79,7 @@ export default function OfferHelpForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           volunteer_id: volunteerId,
+          service_id: selectedService,
           available_from: availableFrom,
           available_to: availableTo,
         }),
