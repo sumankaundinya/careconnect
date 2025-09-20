@@ -17,9 +17,14 @@ import meRouter from "./routes/me.js";
 import reviewsRouter from "./routes/reviews.js";
 import aboutRouter from "./routes/aboutRoutes.js";
 const corsOptions = {
-  origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
+  origin: [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://careconnect-frontend-r0jc.onrender.com",
+  ],
   credentials: true,
 };
+
 const app = express();
 app.use(cors(corsOptions));
 app.use(cookieParser());
