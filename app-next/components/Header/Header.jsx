@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import styles from "./Header.module.css";
 import { Menu } from "lucide-react";
 import Image from "next/image";
-import { useAuthStore } from "@/store/useAuthStore";
+
 import { useRouter } from "next/navigation";
 
 const navItems = [
@@ -18,7 +18,7 @@ const navItems = [
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const { user, logout } = useAuthStore();
+  const { user, logout } = useAuthContext();
   const router = useRouter();
 
   useEffect(() => {

@@ -14,7 +14,7 @@ export const initialLoginFormdata = {
 export default function LoginPage() {
   const [formData, setFormData] = useState(initialLoginFormdata);
   const router = useRouter();
-  const { isLoading, login, error } = useAuthStore();
+
   const handleChange = (event) => {
     setFormData((prev) => ({
       ...prev,
@@ -25,24 +25,36 @@ export default function LoginPage() {
   const handleLogin = async (event) => {
     event.preventDefault();
 
-    const loginResponse = await login(formData.email, formData.password);
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
-    if (loginResponse) {
+      if (!res.ok) {
+        throw new Error("Login failed");
+      }
+
+      const loginResponse = await res.json();
       const { accessToken, user } = loginResponse;
 
-      // Save to localStorage
       localStorage.setItem("token", accessToken);
       localStorage.setItem("user", JSON.stringify(user));
 
-      // Update zustand store
       useAuthStore.setState({ token: accessToken, user });
 
-      // Redirect based on role
       if (user.role === "ADMIN") router.push("/admin");
       else if (user.role === "VOLUNTEER") router.push("/my-profile");
       else router.push("/");
-    } else {
-      console.log("Login failed", error);
+    } catch (err) {
+      console.error("Login failed:", err);
+      alert("Login failed. Please check your credentials.");
     }
   };
 
@@ -80,9 +92,9 @@ export default function LoginPage() {
             className={styles.input}
           />
         </div>
-        {error && <p className={styles.red}>{error}</p>}
+
         <button type="submit" className={styles.button}>
-          {isLoading ? " Login in.." : "Login"}
+          Login
         </button>
 
         <p className={styles.helper}>

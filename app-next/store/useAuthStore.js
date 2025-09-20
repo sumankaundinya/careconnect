@@ -46,10 +46,10 @@ export const useAuthStore = create(
             password,
           });
 
-          const { accessToken, user } = response.data; 
+          const { accessToken, user } = response.data;
 
           set({ isLoading: false, user, token: accessToken });
-          return { accessToken, user }; 
+          return { accessToken, user };
         } catch (error) {
           set({
             isLoading: false,
