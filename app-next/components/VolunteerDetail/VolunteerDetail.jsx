@@ -1,10 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import styles from "./VolunteerDetail.module.css";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const VolunteerDetail = ({ volunteerId }) => {
   const [volunteer, setVolunteer] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuthStore();
 
   const fetchVolunteer = async () => {
     try {
@@ -25,6 +27,11 @@ const VolunteerDetail = ({ volunteerId }) => {
   }, [volunteerId]);
 
   const handleDeleteAvailability = async (slotId) => {
+    if (!user) {
+      alert("You must be logged in to delete availability.");
+      return;
+    }
+
     if (!window.confirm("Are you sure you want to delete this availability?")) {
       return;
     }
@@ -34,6 +41,9 @@ const VolunteerDetail = ({ volunteerId }) => {
         `${process.env.NEXT_PUBLIC_API_URL}/api/available-time/${slotId}`,
         {
           method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
         }
       );
 
@@ -93,20 +103,23 @@ const VolunteerDetail = ({ volunteerId }) => {
                   minute: "2-digit",
                 })}
                 <br />
-                <button
-                  onClick={() => handleDeleteAvailability(slot.id)}
-                  style={{
-                    marginTop: "5px",
-                    backgroundColor: "red",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "4px",
-                    padding: "4px 8px",
-                    cursor: "pointer",
-                  }}
-                >
-                  Delete
-                </button>
+                {user &&
+                  (user.role === "ADMIN" || user.role === "VOLUNTEER") && (
+                    <button
+                      onClick={() => handleDeleteAvailability(slot.id)}
+                      style={{
+                        marginTop: "5px",
+                        backgroundColor: "red",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        padding: "4px 8px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Delete
+                    </button>
+                  )}
                 <hr />
               </div>
             ))
