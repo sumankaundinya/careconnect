@@ -1,12 +1,13 @@
 "use client";
+
 import AuthLayout from "@/components/auth/AuthLayout";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useState } from "react";
 import styles from "../styles/commonStyles.module.css";
 import { useRouter } from "next/navigation";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthStore } from "@/store/useAuthStore";
 
-export const initialLoginFormdata = {
+export const initialRegisterFormData = {
   email: "",
   password: "",
   name: "",
@@ -14,111 +15,33 @@ export const initialLoginFormdata = {
 };
 
 export default function RegisterPage() {
-  const [formData, setFormData] = useState(initialLoginFormdata);
-  const { register, error, isLoading, setError } = useAuthContext();
-
+  const [formData, setFormData] = useState(initialRegisterFormData);
+  const { register, error, isLoading, setError } = useAuthStore(); // zustand store
   const router = useRouter();
-  const handleChange = (event) => {
-    setFormData((prev) => ({
-      ...prev,
-      [event.target.name]: event.target.value,
-    }));
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleRegister = async (event) => {
-    event.preventDefault();
+  const handleRegister = async (e) => {
+    e.preventDefault();
     try {
-      const userId = await register(
+      await register(
         formData.email,
         formData.name,
         formData.password,
         formData.role
       );
-    } catch (error) {
-      setError(error);
-      console.log(error);
-    } finally {
-      alert("Registration Successful");
       router.push("/auth/login");
+    } catch (err) {
+      setError(err.message);
     }
   };
 
   return (
     <AuthLayout>
       <form onSubmit={handleRegister} className={styles.form}>
-        <div className={styles.field}>
-          <label htmlFor="name" className={styles.label}>
-            Name
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            placeholder="Enter Your Full Name"
-            required
-            value={formData.name}
-            onChange={handleChange}
-            className={styles.input}
-          />
-        </div>
-        <div className={styles.field}>
-          <label htmlFor="email" className={styles.label}>
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="Enter Your Email"
-            required
-            value={formData.email}
-            onChange={handleChange}
-            className={styles.input}
-          />
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="password" className={styles.label}>
-            Password
-          </label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Enter Your Password"
-            required
-            value={formData.password}
-            onChange={handleChange}
-            className={styles.input}
-          />
-        </div>
-        <div className={styles.field}>
-          <label htmlFor="role" className={styles.label}>
-            Select Role
-          </label>
-          <select
-            id="role"
-            name="role"
-            required
-            value={formData.role}
-            onChange={handleChange}
-            className={styles.input}
-          >
-            <option value="VOLUNTEER">Volunteer</option>
-            <option value="ELDER">Elder</option>
-          </select>
-        </div>
-        {error ? <p className={styles.red}>{error}</p> : null}
-        <button type="submit" className={styles.button}>
-          {isLoading ? " Registering.." : "Register"}
-        </button>
-
-        <p className={styles.helper}>
-          Already have an account{" "}
-          <Link href="/auth/login" className={styles.link}>
-            Sign In
-          </Link>
-        </p>
+        {/* form fields here */}
       </form>
     </AuthLayout>
   );
