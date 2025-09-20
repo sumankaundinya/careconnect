@@ -6,13 +6,13 @@ import styles from "./Header.module.css";
 import { Menu } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "../../store/useAuthStore"; // ← Import Zustand store
+import { useAuthStore } from "../../store/useAuthStore";
 
 const navItems = [
   { title: "Home", to: "/" },
   { title: "Volunteers", to: "/volunteers" },
   { title: "About", to: "/About" },
-  { title: "Services", to: "/services" },
+  { title: "Services", to: "/Services" },
 ];
 
 export default function Header() {
@@ -36,7 +36,7 @@ export default function Header() {
   const toggleMenu = () => setShowMobileMenu((prev) => !prev);
 
   const handleLogout = async () => {
-    logout(); // Zustand logout function
+    logout();
     router.push("/");
   };
 
