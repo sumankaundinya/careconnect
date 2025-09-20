@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import styles from "./Header.module.css";
 import { Menu } from "lucide-react";
 import Image from "next/image";
-
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "../../store/useAuthStore"; // ← Import Zustand store
 
 const navItems = [
   { title: "Home", to: "/" },
@@ -18,7 +18,13 @@ const navItems = [
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const { user, logout } = useAuthContext();
+
+  // Get user and logout function from Zustand
+  const { user, logout } = useAuthStore((state) => ({
+    user: state.user,
+    logout: state.logout,
+  }));
+
   const router = useRouter();
 
   useEffect(() => {
@@ -30,7 +36,7 @@ export default function Header() {
   const toggleMenu = () => setShowMobileMenu((prev) => !prev);
 
   const handleLogout = async () => {
-    await logout();
+    logout(); // Zustand logout function
     router.push("/");
   };
 

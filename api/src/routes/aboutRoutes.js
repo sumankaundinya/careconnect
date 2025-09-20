@@ -1,7 +1,9 @@
-const express = require('express');
+import express from "express";
+import { handleAboutForm } from "../controller/aboutController.js";
+
 const router = express.Router();
-const { handleAboutForm } = require('../controller/aboutController');
 
-router.post('/', handleAboutForm);
+// POST /api/about
+router.post("/", handleAboutForm);
 
-module.exports = router;
+export default router;

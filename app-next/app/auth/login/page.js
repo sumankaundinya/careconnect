@@ -13,6 +13,7 @@ export const initialLoginFormdata = {
 
 export default function LoginPage() {
   const [formData, setFormData] = useState(initialLoginFormdata);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleChange = (event) => {
@@ -24,6 +25,7 @@ export default function LoginPage() {
 
   const handleLogin = async (event) => {
     event.preventDefault();
+    setIsLoading(true);
 
     try {
       const res = await fetch(
@@ -37,24 +39,27 @@ export default function LoginPage() {
         }
       );
 
-      if (!res.ok) {
-        throw new Error("Login failed");
-      }
+      if (!res.ok) throw new Error("Login failed");
 
       const loginResponse = await res.json();
       const { accessToken, user } = loginResponse;
 
+      // Save to localStorage
       localStorage.setItem("token", accessToken);
       localStorage.setItem("user", JSON.stringify(user));
 
+      // Update Zustand store
       useAuthStore.setState({ token: accessToken, user });
 
+      // Redirect based on role
       if (user.role === "ADMIN") router.push("/admin");
       else if (user.role === "VOLUNTEER") router.push("/my-profile");
       else router.push("/");
     } catch (err) {
       console.error("Login failed:", err);
       alert("Login failed. Please check your credentials.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -93,8 +98,8 @@ export default function LoginPage() {
           />
         </div>
 
-        <button type="submit" className={styles.button}>
-          Login
+        <button type="submit" className={styles.button} disabled={isLoading}>
+          {isLoading ? "Logging in..." : "Login"}
         </button>
 
         <p className={styles.helper}>
