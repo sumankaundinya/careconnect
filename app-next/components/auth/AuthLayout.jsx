@@ -17,8 +17,8 @@ export default function AuthLayout({ children }) {
 
       <div className={styles.rightPanel}>
         <div className={styles.innerWrapper}>
-          <div className={styles.logoWrapper}>
-            {/* todo later */}
+          {/*     <div className={styles.logoWrapper}>
+   
             <Image
               src="/hyf.svg"
               alt="Logo"
@@ -27,7 +27,7 @@ export default function AuthLayout({ children }) {
               width={0}
               sizes="100vw"
             />
-          </div>
+          </div> */}
           {children}
         </div>
       </div>

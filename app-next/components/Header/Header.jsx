@@ -19,7 +19,6 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
-  // Get user and logout function from Zustand
   const { user, logout } = useAuthStore((state) => ({
     user: state.user,
     logout: state.logout,
